@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <string.h>
+
 #include "input_buffer.h"
 
 // implementing the input buffer
@@ -30,4 +32,13 @@ void read_input(InputBuffer* input_buffer) {
 void close_input_buffer(InputBuffer* input_buffer) {
     free(input_buffer->buffer); 
     free(input_buffer);         
+}
+
+MetaCommandResult do_meta_command(InputBuffer* input_buffer){
+    if(strcmp(input_buffer->buffer, ".exit") == 0){
+        close_input_buffer(input_buffer);
+        exit(EXIT_SUCCESS);
+    } else {
+        return META_COMMAND_UNRECOGNIZED_COMMAND;
+    }
 }
