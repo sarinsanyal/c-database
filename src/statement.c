@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 
 #include "statement.h"
 
 PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement){
     char* query = input_buffer->buffer;
 
-    if (strncasecmp(query, "insert", 6) == 0 ){
+    if (strncmp(query, "insert", 6) == 0 ){
         statement->type = STATEMENT_INSERT;
         return PREPARE_SUCCESS;
     }
-    if (strcasecmp(query, "select") == 0) {
+    if (strcmp(query, "select") == 0) {
         statement->type = STATEMENT_SELECT;
         return PREPARE_SUCCESS;
     }
