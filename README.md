@@ -8,8 +8,8 @@
 // Creates the make file
 make
 
-// Run the final executable
-./db
+// Run the final executable with the db file
+./db mydb.db
 ```
 
 Made by Sarin Sanyal, with inspiration from https://cstack.github.io/db_tutorial/

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+#include "table.h"
 //blueprint for the Inputbuffer struct that
 //provides a certain structure to the input text
 
@@ -23,6 +24,6 @@ InputBuffer* new_input_buffer();
 void read_input(InputBuffer* input_buffer);
 void close_input_buffer(InputBuffer* input_buffer);
 
-MetaCommandResult do_meta_command(InputBuffer* input_buffer);
+MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table);
 
 #endif
