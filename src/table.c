@@ -33,7 +33,7 @@ Table* db_open(const char* filename) {
 }
 
 Pager* pager_open(const char*filename){
-    int fd = open(filename, O_RDWR | O_CREAT | S_IWUSR | S_IRUSR );
+    int fd = open(filename, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR );
 
     if (fd == -1) {
         printf("Unable to open a file.\n");
@@ -59,8 +59,8 @@ void print_row(Row* row) {
 
 void serialize_row(Row* source, void* destination) {
     memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
-    memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
-    memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
+    strncpy(destination + USERNAME_OFFSET, source->username, USERNAME_SIZE);
+    strncpy(destination + EMAIL_OFFSET, source->email, EMAIL_SIZE);
 }
 
 void deserialize_row(void* source, Row* destination) {
