@@ -20,16 +20,18 @@ typedef struct {
     int file_descriptor;
     uint32_t file_length;
     void* pages[TABLE_MAX_PAGES];
+    uint32_t num_pages;
 } Pager;
 
 typedef struct {
     Pager* pager;
-    uint32_t num_rows;
+    uint32_t root_page_num;
 } Table;
 
 typedef struct{
     Table* table;
-    uint32_t row_num;
+    uint32_t page_num;
+    uint32_t cell_num;
     bool end_of_table; //indicates a portion one past the last element -> possibly to insert a new row
 } Cursor;
 
@@ -58,7 +60,7 @@ void deserialize_row(void* source, Row* destination);
 void* cursor_value(Cursor* cursor);
 void* get_page(Pager* pager, uint32_t page_num);
 void cursor_advance(Cursor* cursor);
-void pager_flush(Pager* pager, uint32_t page_num, uint32_t size);
+void pager_flush(Pager* pager, uint32_t page_num);
 void db_close(Table* table);
 
 #endif
