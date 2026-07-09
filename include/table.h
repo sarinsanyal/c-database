@@ -52,7 +52,7 @@ Table* db_open(const char* filename);
 Pager* pager_open(const char*filename);
 
 Cursor* table_start(Table* table);
-Cursor* table_end(Table* table);
+Cursor* table_find(Table* table, uint32_t key);
 
 void print_row(Row* row);
 void serialize_row(Row* source, void* destination);
