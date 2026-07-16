@@ -7,7 +7,11 @@ describe 'database' do
     raw_output = nil
     IO.popen("./db test.db", "r+") do |pipe|
       commands.each do |command|
-        pipe.puts command
+        begin  
+          pipe.puts command
+        rescue ErrNo::EPIPE
+          break
+        end
       end
 
       pipe.close_write
@@ -39,7 +43,13 @@ describe 'database' do
     end
     script << ".exit"
     result = run_script(script)
-    expect(result[-2]).to eq('db > Error: Table full.')
+    expect(result.last(2)).to match_array([
+      # "db version 0.1 2026",
+      # "Enter \".help\" for usage hints.",
+      # "Connected to a transient in-memory database.",
+      "db > Executed.",
+      "db > Need to implement updating parent after split",
+    ])
   end
 
   it 'allows inserting strings that are the maximum length' do
@@ -187,6 +197,71 @@ describe 'database' do
       "db > Error: Duplicate Key.",
       "db > (1, user1, person1@example.com)",
       "Executed.",
+      "db > ",
+    ])
+  end
+
+  it 'allows printing out the structure of a 3-leaf-node btree' do
+    script = (1..15).map { |i| "insert #{i} user#{i} person#{i}@example.com" }
+    script << ".tree"
+    script << ".exit"
+    result = run_script(script)
+
+    expect(result).to match_array([
+      "db version 0.1 2026",
+      "Enter \".help\" for usage hints.",
+      "Connected to a transient in-memory database.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > Executed.",
+      "db > - internal (size 1)",
+      "  - leaf (size 7)",
+      "    - 1",
+      "    - 2",
+      "    - 3",
+      "    - 4",
+      "    - 5",
+      "    - 6",
+      "    - 7",
+      "  - key 7",
+      "  - leaf (size 8)",
+      "    - 8",
+      "    - 9",
+      "    - 10",
+      "    - 11",
+      "    - 12",
+      "    - 13",
+      "    - 14",
+      "    - 15",
+      "db > ",
+    ])
+  end
+
+  it 'prints an error message if there is a duplicate key' do
+    script = [
+      "insert 1 user1 person1@example.com",
+      "insert 1 user1 person1@example.com",
+      ".exit",
+    ]
+    result = run_script(script)
+    expect(result).to match_array([
+      "db version 0.1 2026",
+      "Enter \".help\" for usage hints.",
+      "Connected to a transient in-memory database.",
+      "db > Executed.",
+      "db > Error: Duplicate Key.",
       "db > ",
     ])
   end
