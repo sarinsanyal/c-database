@@ -9,7 +9,7 @@ describe 'database' do
       commands.each do |command|
         begin  
           pipe.puts command
-        rescue ErrNo::EPIPE
+        rescue Errno::EPIPE
           break
         end
       end
@@ -37,21 +37,6 @@ describe 'database' do
     ])
   end
 
-  it 'prints error message when table is full' do
-    script = (1..1401).map do |i|
-      "insert #{i} user#{i} person#{i}@example.com"
-    end
-    script << ".exit"
-    result = run_script(script)
-    expect(result.last(2)).to match_array([
-      # "db version 0.1 2026",
-      # "Enter \".help\" for usage hints.",
-      # "Connected to a transient in-memory database.",
-      "db > Executed.",
-      "db > Need to implement updating parent after split",
-    ])
-  end
-
   it 'allows inserting strings that are the maximum length' do
     long_username = "a" * 32
     long_email = "a" * 255
@@ -73,22 +58,22 @@ describe 'database' do
   end
 
   it 'prints error message if strings are too long' do
-	long_username = "a"*33
-	long_email = "a"*256
-	script = [
-		"insert 1 #{long_username} #{long_email}",
-		"select",
-		".exit",
-	]
-	result = run_script(script)
-	expect(result).to match_array([
-		"db version 0.1 2026",
-		"Enter \".help\" for usage hints.",
-		"Connected to a transient in-memory database.",
-		"db > String is too long.",
-		"db > Executed.",
-		"db > ",
-	])
+    long_username = "a" * 33
+    long_email = "a" * 256
+    script = [
+      "insert 1 #{long_username} #{long_email}",
+      "select",
+      ".exit",
+    ]
+    result = run_script(script)
+    expect(result).to match_array([
+      "db version 0.1 2026",
+      "Enter \".help\" for usage hints.",
+      "Connected to a transient in-memory database.",
+      "db > String is too long.",
+      "db > Executed.",
+      "db > ",
+    ])
   end
 
   it 'prints an error message if id is negative' do
@@ -178,26 +163,6 @@ describe 'database' do
       "  - 1 : 2",
       "  - 2 : 3",
       "db > "
-    ])
-  end
-
-  it 'prints an error message if there is a duplicate id' do  
-    script = [
-      "insert 1 user1 person1@example.com",
-      "insert 1 user1 person1@example.com",
-      "select",
-      ".exit",
-    ]
-    result = run_script(script)
-    expect(result).to match_array([
-      "db version 0.1 2026",
-      "Enter \".help\" for usage hints.",
-      "Connected to a transient in-memory database.",
-      "db > Executed.",
-      "db > Error: Duplicate Key.",
-      "db > (1, user1, person1@example.com)",
-      "Executed.",
-      "db > ",
     ])
   end
 

@@ -58,6 +58,7 @@ ExecuteResult execute_insert(Statement* statement, Table* table){
     uint32_t key_to_insert = row_to_insert->id;
     Cursor* cursor = table_find(table, key_to_insert);
     
+    //duplicate key
     if (cursor->cell_num < num_cells) {
         uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
         if (key_at_index == key_to_insert) {

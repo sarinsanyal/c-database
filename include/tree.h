@@ -78,4 +78,11 @@ void print_constants();
 void indent(uint32_t level);
 void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_level);
 
+uint32_t node_parent(void* node);
+void set_node_parent(void* node, uint32_t parent_page_num);
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
+uint32_t internal_node_find_child(void* node, uint32_t key);
+void internal_node_insert(Table* table, uint32_t parent_page_num, uint32_t child_page_num);
+void internal_node_split_and_insert(Table* table, uint32_t parent_page_num, uint32_t child_page_num);
+
 #endif
